@@ -1,129 +1,52 @@
 public class Expression {
-    static String codedString;
     static int firstDigit = 1;
     static int secondDigit = 1;
-    private static String signAll = "-+*/";
     static char sign = '0';
     static boolean isRomanian = false;
 
     public static void decoder(String s) {
         s = s.toLowerCase();
         String roma = "ivx";
-        String arab = "123456789";
-        int arabic = 0, romanian = 0;
         for (int i = 0; i < s.length(); i++) {
             if (roma.contains(String.valueOf(s.charAt(i)))) {
-                romanian = 1;
-            }
-            if (arab.contains(String.valueOf(s.charAt(i)))) {
-                arabic = 1;
-            }
-        }
-        switch (arabic + romanian) {
-            case 0: {
-                System.out.println("Где цифры?");
-                System.exit(0);
-            }
-            case 1: {
-                if (arabic == 1) {
-                    arabicDecoder(s);
-                } else {
-                    isRomanian = true;
-                    romanianDecoder(s);
-                }
+                isRomanian = true;
                 break;
             }
-            case 2: {
-                System.out.println("Либо римские, либо арабские!");
-                System.exit(0);
-            }
-            default:
-                System.out.println("Что-то пошло не так");
-                System.exit(0);
         }
-
+        digitDecoder(s);
     }
 
-    private static void arabicDecoder(String s) {
+    private static void digitDecoder(String s) {
         if (s.charAt(0) == '-') {
             firstDigit *= -1;
             s = s.substring(1);
         }
-        String tempDigit = "";
+        String tempString = "";
+        String signAll = "-+*/";
         for (int i = 0; i < s.length(); i++) {
             if (s.charAt(i) == '-' && sign != '0') {
                 secondDigit *= -1;
                 continue;
             }
             if (signAll.contains(String.valueOf(s.charAt(i)))) {
-                firstDigit *= Integer.parseInt(tempDigit);
+                firstDigit *= isRomanian ? romanianDigitChoose(tempString) : Integer.parseInt(tempString);
                 sign = s.charAt(i);
-                tempDigit = "";
+                tempString = "";
                 continue;
             }
-            tempDigit += s.charAt(i);
+            tempString += s.charAt(i);
         }
-        secondDigit *= Integer.parseInt(tempDigit);
-    }
-
-    private static void romanianDecoder(String s) {
-        if (s.charAt(0) == '-') {
-            firstDigit *= -1;
-            s = s.substring(1);
-        }
-        String tempDigit = "";
-        for (int i = 0; i < s.length(); i++) {
-            if (s.charAt(i) == '-' && sign != '0') {
-                secondDigit *= -1;
-                continue;
-            }
-            if (signAll.contains(String.valueOf(s.charAt(i)))) {
-                firstDigit *= romanianDigitChoose(tempDigit);
-                sign = s.charAt(i);
-                tempDigit = "";
-                continue;
-            }
-            tempDigit += s.charAt(i);
-        }
-        secondDigit *= romanianDigitChoose(tempDigit);
+        secondDigit *= isRomanian ? romanianDigitChoose(tempString) : Integer.parseInt(tempString);
     }
 
     private static int romanianDigitChoose(String temp) {
-        switch (temp) {
-            case "i": {
-                return 1;
-            }
-            case "ii": {
-                return 2;
-            }
-            case "iii": {
-                return 3;
-            }
-            case "iv": {
-                return 4;
-            }
-            case "v": {
-                return 5;
-            }
-            case "vi": {
-                return 6;
-            }
-            case "vii": {
-                return 7;
-            }
-            case "viii": {
-                return 8;
-            }
-            case "ix": {
-                return 9;
-            }
-            case "x": {
-                return 10;
-            }
-            default: {
-                return 11;
+        String[] romanDigits = {"i", "ii", "iii", "iv", "v", "vi", "vii", "viii", "ix", "x"};
+        for (int i = 0; i < romanDigits.length; i++) {
+            if (romanDigits[i].equals(temp)) {
+                return i + 1;
             }
         }
+        return -1;
     }
 
     public static String coder(int digit) {
