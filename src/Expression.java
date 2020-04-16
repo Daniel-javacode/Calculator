@@ -18,15 +18,15 @@ public class Expression {
 
     private static void digitDecoder(String s) {
         if (s.charAt(0) == '-') {
-            firstDigit *= -1;
-            s = s.substring(1);
+            System.out.println("Первое число меньше ноля!");
+            System.exit(0);
         }
         String tempString = "";
         String signAll = "-+*/";
         for (int i = 0; i < s.length(); i++) {
             if (s.charAt(i) == '-' && sign != '0') {
-                secondDigit *= -1;
-                continue;
+                System.out.println("Второе число меньше ноля!");
+                System.exit(0);
             }
             if (signAll.contains(String.valueOf(s.charAt(i)))) {
                 firstDigit *= isRomanian ? romanianDigitChoose(tempString) : Integer.parseInt(tempString);
@@ -34,9 +34,17 @@ public class Expression {
                 tempString = "";
                 continue;
             }
+            if (s.charAt(i)==','||s.charAt(i)=='.'){
+                System.out.println("Вещественные числа недопустимы");
+                System.exit(0);
+            }
             tempString += s.charAt(i);
         }
         secondDigit *= isRomanian ? romanianDigitChoose(tempString) : Integer.parseInt(tempString);
+        if (sign=='/' && secondDigit == 0){
+            System.out.println("Делить на ноль нельзя!");
+            System.exit(0);
+        }
     }
 
     private static int romanianDigitChoose(String temp) {
@@ -46,10 +54,16 @@ public class Expression {
                 return i + 1;
             }
         }
+        System.out.println("Не знаю таких римских");
+        System.exit(0);
         return -1;
     }
 
     public static String coder(int digit) {
+        if (digit == 0) {
+            System.out.println("Ноля у римлян не было!");
+            System.exit(0);
+        }
         String end = "";
         if (digit < 0) {
             end += '-';
